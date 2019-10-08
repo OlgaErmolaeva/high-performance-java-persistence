@@ -1,12 +1,14 @@
 package com.vladmihalcea.book.hpjp.hibernate.equality;
 
 import com.vladmihalcea.book.hpjp.hibernate.identifier.Identifiable;
+import org.junit.Assert;
 import org.junit.Test;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.HashSet;
 
 /**
  * @author Vlad Mihalcea
@@ -27,6 +29,32 @@ public class IdEqualityTest
         post.setTitle("High-PerformanceJava Persistence");
 
         assertEqualityConsistency(Post.class, post);
+    }
+
+    @Test
+    public void testHashSetDuplicates(){
+        Post postHello = new Post();
+        postHello.setTitle("Hello"); // id=null, post="Hello"
+
+        Post postHowAreYou = new Post();
+        postHowAreYou.setTitle("How Are You");
+
+        Post postBye = new Post();
+        postBye.setTitle("Bye Bye");
+
+        Post postHelloAgain = new Post();
+        postHelloAgain.setTitle("Hello");  // Duplicate: id=null, post="Hello"
+
+        HashSet<Object> posts = new HashSet<>();
+
+        posts.add(postHello);
+        posts.add(postHowAreYou);
+        posts.add(postBye);
+        posts.add(postHelloAgain);
+
+        Assert.assertEquals("Set contains duplicates", 4, posts.size());
+
+
     }
 
     @Entity(name = "Post")
